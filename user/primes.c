@@ -15,6 +15,24 @@ stc(int *pp, int array[], int arlen)
   close(pp[1]);
 }
 
+int *
+filter(int prime, int rfd, int *nlen)
+{
+  int n = 0;
+  int * narray;
+
+  *nlen = 0; 
+  narray = (int *) malloc(MAX * sizeof(int));
+  
+  do{
+    n = read(rfd, narray+(*nlen), sizeof(int));
+    if(narray[*nlen] % prime != 0 && n > 0)
+      (*nlen)++;
+  } while(n>0);
+
+  return narray;
+}
+
 void
 cproc(int rfd)
 /* child process */
@@ -44,24 +62,6 @@ cproc(int rfd)
     close(pp[1]);
     cproc(pp[0]);
   }
-}
-
-int *
-filter(int prime, int rfd, int *nlen)
-{
-  int n = 0;
-  int * narray;
-
-  *nlen = 0; 
-  narray = (int *) malloc(MAX * sizeof(int));
-  
-  do{
-    n = read(rfd, narray+(*nlen), sizeof(int));
-    if(narray[*nlen] % prime != 0 && n > 0)
-      (*nlen)++;
-  } while(n>0);
-
-  return narray;
 }
 
 int 
